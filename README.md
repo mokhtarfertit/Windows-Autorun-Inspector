@@ -95,3 +95,33 @@ Windows autorun inspector/
 └── LICENSE
 
 ```
+```markdown
+## Application Workflow
+
+1. The user runs a command such as `winpersist scan`.
+2. The CLI sends the request to the Core Engine.
+3. The Core Engine starts the collectors.
+4. Collectors inspect Startup folders, Registry Run keys, Scheduled Tasks, and Windows Services.
+5. The Normalizer converts all collected entries into a common format.
+6. The Risk Engine applies suspicious-pattern rules and calculates risk scores.
+7. The Baseline Comparator checks for new, removed, or modified entries.
+8. Findings are classified as Low, Medium, High, or Critical.
+9. The Report Generator exports JSON, CSV, or HTML reports.
+10. The user reviews the final summary and detailed report.
+
+## user case diagram 
+
+```mermaid
+flowchart LR
+    User([Security Analyst / User])
+
+    User --> Scan[Run Scan]
+    User --> Baseline[Create Baseline]
+    User --> Compare[Compare With Baseline]
+    User --> View[View Results]
+    User --> Report[Generate Report]
+
+    Scan --> Analyze[Analyze Persistence Entries]
+    Compare --> Analyze
+    Analyze --> View
+    View --> Report
