@@ -109,7 +109,10 @@ Windows autorun inspector/
 9. The Report Generator exports JSON, CSV, or HTML reports.
 10. The user reviews the final summary and detailed report.
 
-## user case diagram 
+## Use Case Diagram
+
+The use case diagram shows the main actions that the user can perform with **WinPersist Hunter**.  
+The user can run a scan, create a trusted baseline, compare the current system state with the baseline, view detected results, and generate a report.
 
 ```mermaid
 flowchart LR
@@ -125,5 +128,4 @@ flowchart LR
     Compare --> Analyze
     Analyze --> View
     View --> Report
-
 ```
