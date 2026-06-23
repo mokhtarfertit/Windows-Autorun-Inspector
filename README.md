@@ -109,31 +109,3 @@ Windows autorun inspector/
 9. The Report Generator exports JSON, CSV, or HTML reports.
 10. The user reviews the final summary and detailed report.
 
-## Use Case Diagram
-
-The use case diagram shows the main actions that the user can perform with **WinPersist Hunter**.  
-The user can run a scan, create a trusted baseline, compare the current system state with the baseline, view detected results, and generate a report.
-
-```mermaid
-flowchart LR
-    User([Security Analyst / User])
-
-    User --> Scan[Run Scan]
-    User --> Baseline[Create Baseline]
-    User --> Compare[Compare With Baseline]
-    User --> View[View Results]
-    User --> Report[Generate Report]
-
-```
-
-
-    Scan --> Analyze[Analyze Persistence Entries]
-    Compare --> Analyze
-    Analyze --> View
-    View --> Report
-<<<<<<< HEAD
-```
-=======
-
-```
->>>>>>> 5c70a05ad20d8fde26c64ebc4e60ef4287181f0f
