@@ -121,6 +121,9 @@ flowchart LR
     User --> View[View Results]
     User --> Report[Generate Report]
 
+```
+
+
     Scan --> Analyze[Analyze Persistence Entries]
     Compare --> Analyze
     Analyze --> View
