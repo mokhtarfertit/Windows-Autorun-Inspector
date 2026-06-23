@@ -42,7 +42,9 @@ Windows autorun inspector solves this problem by automatically scanning common W
 | Version Control | Git + GitHub |
 
 # Project Structure
-winpersist-hunter/
+
+```text
+Windows autorun inspector/
 │
 ├── app/
 │   ├── main.py
@@ -91,3 +93,5 @@ winpersist-hunter/
 ├── requirements.txt
 ├── .gitignore
 └── LICENSE
+
+```

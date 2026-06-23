@@ -1,6 +1,7 @@
-## structure of project
 
+# Project Structure
 
+```text
 Windows autorun inspector/
 │
 ├── app/
@@ -50,3 +51,5 @@ Windows autorun inspector/
 ├── requirements.txt
 ├── .gitignore
 └── LICENSE
+
+```
