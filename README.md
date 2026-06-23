@@ -125,3 +125,5 @@ flowchart LR
     Compare --> Analyze
     Analyze --> View
     View --> Report
+
+```
