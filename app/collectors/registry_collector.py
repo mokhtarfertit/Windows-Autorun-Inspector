@@ -1,4 +1,5 @@
 import winreg
+from datetime import datetime, timedelta, timezone
 
 
 class RegistryCollector:
@@ -24,8 +25,10 @@ class RegistryCollector:
         entries = []
 
         try:
+            # opens one registry autorun location.
             with winreg.OpenKey(root_key, registry_path) as key:
                 index = 0
+                timestamp = self.get_key_last_modified(root_key, registry_path)
 
                 while True:
                     try:
@@ -38,6 +41,7 @@ class RegistryCollector:
                                 "source": "Registry",
                                 "registry_path": registry_path,
                                 "value_type": value_type,
+                                "timestamp": timestamp,
                             }
                         )
 
@@ -52,3 +56,20 @@ class RegistryCollector:
             pass
 
         return entries
+    
+    def get_key_last_modified(self, root_key, registry_path):
+        try:
+            with winreg.OpenKey(root_key,registry_path) as key:
+                key_info = winreg.QueryInfoKey(key)
+                last_modified = key_info[2]
+
+                windows_epoch = datetime(1601, 1, 1, tzinfo=timezone.utc)
+                modified_time = windows_epoch + timedelta(microseconds=last_modified/ 10)
+
+                return modified_time.isoformat()
+            
+        except FileNotFoundError:
+            return ""
+        except PermissionError:
+            return ""
+        
