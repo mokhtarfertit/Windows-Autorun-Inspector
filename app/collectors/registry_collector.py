@@ -1,11 +1,14 @@
 import winreg
 from datetime import datetime, timedelta, timezone
 
+from app.collectors.base_collector import BaseCollector
+
 
 class RegistryCollector:
     """""to scan Windows Registry autorun locations and return the programs 
     that start automatically when Windows starts or when the user logs in."""""
     def __init__(self):
+        super().__init__(source_name = "Registry",mitre_technique="T1060 /T1547.001")
         self.registry_paths = [
             (winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run"),
             (winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\RunOnce"),
