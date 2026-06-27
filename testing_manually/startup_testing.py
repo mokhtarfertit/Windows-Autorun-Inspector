@@ -1,7 +1,7 @@
-from app.collectors.startup_collector import startupCollector
+from app.collectors.startup_collector import StartupCollector
 
 def main():
-    collector = startupCollector()
+    collector = StartupCollector()
     entries = collector.collect()
 
     print(f"Found {len(entries)} startup folder entries")

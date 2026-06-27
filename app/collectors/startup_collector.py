@@ -2,7 +2,7 @@ from pathlib import Path
 
 from app.collectors.base_collector import BaseCollector
 
-class startupCollector(BaseCollector):
+class StartupCollector(BaseCollector):
     """Scan windows Startup folders for autorun files."""
 
     def __init__(self):
