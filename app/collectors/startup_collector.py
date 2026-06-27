@@ -7,6 +7,7 @@ class startupCollector(BaseCollector):
 
     def __init__(self):
         super().__init__(source_name="Startup Folder", mitre_technique="T1547.001")
+        # this for sepecific this user.
         self.user_startup_path = (
             Path.home()
             / "AppData"
@@ -17,7 +18,7 @@ class startupCollector(BaseCollector):
             / "Programs"
             / "Startup"
         )
-
+        # this for take any user in this machine 
         self.system_startup_path = Path(
             r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
         )
