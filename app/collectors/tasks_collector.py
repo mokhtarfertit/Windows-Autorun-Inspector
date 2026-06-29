@@ -12,7 +12,7 @@ class TaskCollector(BaseCollector):
             "powershell",
             "-NoProfile",
             "-Command",
-            "Get_scheduledTask | Select-object TaskName, TaskPath, State | convertTo-Json ",
+            "Get-ScheduledTask | Select-Object TaskName,TaskPath,State | ConvertTo-Json"
         ]
 
     def collect(self):
@@ -21,6 +21,7 @@ class TaskCollector(BaseCollector):
     
     def run_powershell_command(self):
         try:
+            # subprocess.run() run powershell from python.
             result = subprocess.run(
                 self.powershell_command,
                 capture_output=True,
@@ -35,7 +36,7 @@ class TaskCollector(BaseCollector):
         except FileNotFoundError:
             return ""
         
-    def parse_tak_output(self,output):
+    def parse_task_output(self,output):
         entries = []
 
         if not output:
@@ -51,7 +52,7 @@ class TaskCollector(BaseCollector):
 
         for task in tasks:
             task_name = task.get("TaskName", "")
-            task_path = task.get("task_path","")
+            task_path = task.get("TaskPath", "")
             state = task.get("State", "")
         
             entries.append(
