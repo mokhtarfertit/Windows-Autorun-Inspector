@@ -15,7 +15,7 @@ class ServiceCollector(BaseCollector):
                 "powershell",
                 "-NoProfile",
                 "-Command",
-                "Get-CimInstance Win32_Service | Select_Object Name,DisplayName,State,StartMode,PathName | ConvertTo-Json",
+                "Get-CimInstance Win32_Service | Select-Object Name,DisplayName,State,StartMode,PathName | ConvertTo-Json",
             ]
 
     def collect(self):
@@ -30,7 +30,7 @@ class ServiceCollector(BaseCollector):
                     text=True,
                     check=False,
                 )
-
+                # If it works, return the JSON text.
                 if result.returncode != 0 :
                     return ""
                 
@@ -38,7 +38,7 @@ class ServiceCollector(BaseCollector):
             
             except FileNotFoundError:
                 return ""
-            
+    # This converts PowerShell JSON text into Python dictionaries.     
     def parse_service_output(self,output):
             entries = []
 
