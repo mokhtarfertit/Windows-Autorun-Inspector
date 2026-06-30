@@ -55,23 +55,23 @@ class ServiceCollector(BaseCollector):
 
             for service in services:
                 name = service.get("Name", "")
-            display_name = service.get("DisplayName", "")
-            state = service.get("State", "")
-            start_mode = service.get("StartMode", "")
-            path_name = service.get("PathName", "")
+                display_name = service.get("DisplayName", "")
+                state = service.get("State", "")
+                start_mode = service.get("StartMode", "")
+                path_name = service.get("PathName", "")
 
-            entries.append(
-                {
-                    "name": name,
-                    "display_name": display_name,
-                    "command": path_name,
-                    "path": path_name,
-                    "source": self.source_name,
-                    "state": state,
-                    "start_mode": start_mode,
-                    "mitre_technique": self.mitre_technique,
-                }
-            )
+                entries.append(
+                    {
+                        "name": name,
+                        "display_name": display_name,
+                        "command": path_name,
+                        "path": path_name,
+                        "source": self.source_name,
+                        "state": state,
+                        "start_mode": start_mode,
+                        "mitre_technique": self.mitre_technique,
+                    }
+                )
 
             return entries
 
