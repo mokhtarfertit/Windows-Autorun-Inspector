@@ -9,7 +9,7 @@ class ServiceCollector(BaseCollector):
     def __init__(self):
             super().__init__(
                 source_name= "Windows Service",
-                mitre_technique="T1543.003",
+                mitre_technique="T1543.003"
                 )
             self.powershell_command = [
                 "powershell",
@@ -46,7 +46,7 @@ class ServiceCollector(BaseCollector):
                 return entries
             
             try:
-                services = json.load(output)
+                services = json.loads(output)
             except json.JSONDecodeError:
                 return entries
             
