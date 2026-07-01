@@ -2,39 +2,20 @@ import subprocess
 import json
 
 from app.collectors.base_collector import BaseCollector
+from app.utils.powershell_runner import PowerShellRunner
 
 class TaskCollector(BaseCollector):
     """Scan Windows Scheduled Tasks for autorun entries."""
 
     def __init__(self):
         super().__init__(source_name="Scheduled Task", mitre_technique="T1053.005")
-        self.powershell_command = [
-            "powershell",
-            "-NoProfile",
-            "-Command",
-            "Get-ScheduledTask | Select-Object TaskName,TaskPath,State | ConvertTo-Json"
-        ]
+        self.powershell_runner = PowerShellRunner()
+        self.powershell_command = "Get-ScheduledTask | Select-Object TaskName,TaskPath,State | ConvertTo-Json"
 
     def collect(self):
-        output = self.run_powershell_command()
+        output = self.powershell_runner.run(self.powershell_command)
         return self.parse_task_output(output)
     
-    def run_powershell_command(self):
-        try:
-            # subprocess.run() run powershell from python.
-            result = subprocess.run(
-                self.powershell_command,
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-
-            if result.returncode != 0:
-                return ""
-            
-            return result.stdout
-        except FileNotFoundError:
-            return ""
         
     def parse_task_output(self,output):
         entries = []

@@ -2,6 +2,7 @@ import json
 import subprocess
 
 from app.collectors.base_collector import BaseCollector
+from app.utils.powershell_runner import PowerShellRunner
 
 class ServiceCollector(BaseCollector):
     """Scan windows services for autorun entries."""
@@ -11,33 +12,15 @@ class ServiceCollector(BaseCollector):
                 source_name= "Windows Service",
                 mitre_technique="T1543.003"
                 )
-            self.powershell_command = [
-                "powershell",
-                "-NoProfile",
-                "-Command",
-                "Get-CimInstance Win32_Service | Select-Object Name,DisplayName,State,StartMode,PathName | ConvertTo-Json",
-            ]
+            self.powershell_runner = PowerShellRunner()
+            self.powershell_command ="Get-CimInstance Win32_Service | Select-Object Name,DisplayName,State,StartMode,PathName | ConvertTo-Json"
+            
 
     def collect(self):
-            output = self.run_powershell_command()
+            output = self.powershell_runner.run(self.powershell_command)
             return self.parse_service_output(output)
         
-    def run_powershell_command(self):
-            try:
-                result = subprocess.run(
-                    self.powershell_command,
-                    capture_output=True,
-                    text=True,
-                    check=False,
-                )
-                # If it works, return the JSON text.
-                if result.returncode != 0 :
-                    return ""
-                
-                return result.stdout
-            
-            except FileNotFoundError:
-                return ""
+    
     # This converts PowerShell JSON text into Python dictionaries.     
     def parse_service_output(self,output):
             entries = []
