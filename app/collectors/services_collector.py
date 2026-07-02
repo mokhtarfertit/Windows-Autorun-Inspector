@@ -1,5 +1,4 @@
 import json
-import subprocess
 
 from app.collectors.base_collector import BaseCollector
 from app.utils.powershell_runner import PowerShellRunner
@@ -52,6 +51,7 @@ class ServiceCollector(BaseCollector):
                         "source": self.source_name,
                         "state": state,
                         "start_mode": start_mode,
+                        "timestamp": "",
                         "mitre_technique": self.mitre_technique,
                     }
                 )

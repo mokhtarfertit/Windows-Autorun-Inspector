@@ -1,8 +1,7 @@
 import winreg
-from datetime import datetime, timedelta, timezone
 
 from app.collectors.base_collector import BaseCollector
-
+from app.utils.time_utils import windows_filetime_to_iso
 
 class RegistryCollector(BaseCollector):
     """""to scan Windows Registry autorun locations and return the programs 
@@ -66,10 +65,7 @@ class RegistryCollector(BaseCollector):
                 key_info = winreg.QueryInfoKey(key)
                 last_modified = key_info[2]
 
-                windows_epoch = datetime(1601, 1, 1, tzinfo=timezone.utc)
-                modified_time = windows_epoch + timedelta(microseconds=last_modified/ 10)
-
-                return modified_time.isoformat()
+                return windows_filetime_to_iso(last_modified)
             
         except FileNotFoundError:
             return ""

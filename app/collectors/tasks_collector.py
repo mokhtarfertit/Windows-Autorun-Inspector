@@ -1,4 +1,3 @@
-import subprocess
 import json
 
 from app.collectors.base_collector import BaseCollector
@@ -43,6 +42,7 @@ class TaskCollector(BaseCollector):
                     "path": task_path,
                     "source": self.source_name,
                     "state": state,
+                    "timestamp": "",
                     "mitre_technique": self.mitre_technique,
                 }
             )

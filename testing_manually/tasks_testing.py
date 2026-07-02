@@ -13,6 +13,7 @@ def main():
         print(f"State: {entry['state']}")
         print(f"Source: {entry['source']}")
         print(f"MITRE: {entry['mitre_technique']}")
+        print(f"timestamp: {entry['timestamp']}")
 
 
 if __name__ == "__main__":

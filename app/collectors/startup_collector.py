@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from app.collectors.base_collector import BaseCollector
+from app.utils.time_utils import timestamp_to_iso
 
 class StartupCollector(BaseCollector):
     """Scan windows Startup folders for autorun files."""
@@ -45,7 +46,7 @@ class StartupCollector(BaseCollector):
                         "path": str(item),
                         "source": self.source_name,
                         "startup_folder": str(folder_path),
-                        "timestamp": item.stat().st_mtime,
+                        "timestamp": timestamp_to_iso(item.stat().st_mtime),
                         "mitre_technique":self.mitre_technique,
                     }
                 )

@@ -14,6 +14,7 @@ def main():
         print(f"State: {entry['state']}")
         print(f"Start mode: {entry['start_mode']}")
         print(f"Path: {entry['path']}")
+        print(f"timestamp: {entry['timestamp']}")
 
 
 if __name__ == "__main__":
