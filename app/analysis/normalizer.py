@@ -41,4 +41,52 @@ class Normalizer:
 
         return persistence_entry
     
-    def extract_path
+    def extract_path(self,command: str) -> str:
+        """Extract executable apth from a command string."""
+
+        if not command:
+            return ""
+        
+        command = command.strip()
+
+        if command.startswith('"'):
+            end_quote_index = command.find('"', 1)
+
+            if end_quote_index != -1:
+                return command[1:end_quote_index]
+            
+        executable_extensions = [".exe", ".dll", ".bat", ".cmd", ".ps1", ".vbs", ".js", ".Ink"]
+        lower_command = command.lower()
+
+        for extension in executable_extensions:
+            extension_index = lower_command.find(extension)
+
+            if extension_index != -1:
+                return command[: extension_index + len(extension)].strip()
+            
+        return command.split()[0]
+    
+    def generate_entry_id(self, entry: PersistenceEntry) -> str:
+        """ Generate a stable unique ID for a persistence entry"""
+        raw_id = f"{entry.source}|{entry.name}|{entry.path}|{entry.command}"
+        return hashlib.sha256(raw_id.lower().encode("utf-8")).hexdigest()
+    
+    def get_entry_type(self, entry: dict) -> str:
+        """Return a readable entry type based on collector source."""
+
+        source = entry.get("source", "")
+
+
+        if source =="Registry":
+            return "Registry Run Key"
+        
+        if source == "Startup Folder":
+            return "Startup Folder"
+        
+        if source == "Scheduled Task":
+            return "Scheduled Task"
+        
+        if source == "Windows Service":
+            return "Windows Service"
+        
+        return "Unknown"
