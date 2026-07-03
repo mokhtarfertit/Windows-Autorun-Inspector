@@ -1,6 +1,10 @@
 # Implementation Order
 
-This document explains the recommended order to implement the Windows Autorun Inspector project, including when to do manual testing and unit testing.
+This document explains the recommended order to implement the Windows Autorun Inspector project.
+
+The order follows the UML class diagram. The goal is to build the project from the lowest-level helpers first, then collectors, then analysis, baseline comparison, reporting, and finally the main engine.
+
+---
 
 ## 1. Project Foundation
 
@@ -11,19 +15,28 @@ This document explains the recommended order to implement the Windows Autorun In
 - `app/utils/time_utils.py`
 - `app/utils/hash_utils.py`
 
+### UML Classes
+
+- `BaseCollector`
+- `PowerShellRunner`
+- `HashUtils`
+
 ### Goal
 
-Create shared helper classes used by the rest of the project.
+Create shared base classes and helper utilities used by the rest of the project.
 
 ### Manual Testing
 
 - Test `PowerShellRunner` with a simple PowerShell command.
-- Example command: `Get-Date`
+- Test `time_utils.py` by converting timestamps.
+- Test `hash_utils.py` with a real file path.
 
 ### Unit Testing
 
-- Test that `PowerShellRunner.run()` returns output when command succeeds.
-- Test that it returns an empty string when command fails.
+- Test `PowerShellRunner.run()` with mocked `subprocess.run`.
+- Test timestamp conversion functions.
+- Test SHA-256 hash calculation.
+- Test behavior when file path does not exist.
 
 ---
 
@@ -36,6 +49,13 @@ Create shared helper classes used by the rest of the project.
 - `app/collectors/tasks_collector.py`
 - `app/collectors/services_collector.py`
 
+### UML Classes
+
+- `RegistryCollector`
+- `StartupCollector`
+- `TaskCollector`
+- `ServiceCollector`
+
 ### Goal
 
 Collect raw autorun data from Windows persistence locations.
@@ -44,7 +64,7 @@ Collect raw autorun data from Windows persistence locations.
 
 Test each collector separately:
 
-- Registry Collector: verify it finds Registry Run and RunOnce entries.
+- Registry Collector: verify it finds Registry `Run` and `RunOnce` entries.
 - Startup Collector: verify it scans user and system Startup folders.
 - Task Collector: verify it returns Scheduled Tasks.
 - Service Collector: verify it returns Windows Services.
@@ -64,25 +84,42 @@ Recommended tests:
 
 ---
 
-## 3. Data Models
+## 3. Shared Data Classes
 
 ### Implement
 
-- `app/models.py`
+Recommended structure:
 
-Classes:
+- `app/entities/persistence_entry.py`
+- `app/entities/scan_result.py`
+- `app/rules/risk_rule.py`
+
+Alternative simple structure:
+
+- `app/entities.py`
+
+### UML Classes
 
 - `PersistenceEntry`
 - `ScanResult`
+- `RiskRule`
 
 ### Goal
 
-Create standard objects for collected entries and scan results.
+Create standard objects used across the project.
+
+`PersistenceEntry` represents one autorun item.
+
+`ScanResult` represents the full result of one scan.
+
+`RiskRule` represents one detection rule used by the risk engine.
 
 ### Manual Testing
 
 - Create one `PersistenceEntry` manually.
 - Print `to_dict()` and verify the output.
+- Create one `ScanResult` manually.
+- Verify scan counters such as total, low, medium, high, and critical.
 
 ### Unit Testing
 
@@ -91,7 +128,10 @@ Test:
 - Object creation.
 - Default values.
 - `to_dict()` output.
-- Risk fields such as `risk_score`, `risk_level`, and `reasons`.
+- Risk fields:
+  - `risk_score`
+  - `risk_level`
+  - `reasons`
 
 ---
 
@@ -101,14 +141,21 @@ Test:
 
 - `app/analysis/normalizer.py`
 
+### UML Class
+
+- `Normalizer`
+
 ### Goal
 
-Convert raw dictionaries from collectors into `PersistenceEntry` objects.
+Convert raw dictionaries from collectors into clean `PersistenceEntry` objects.
+
+Collectors may return different fields. The normalizer gives all entries one standard structure.
 
 ### Manual Testing
 
 - Pass sample collector output to the normalizer.
 - Verify that entries have the same final structure.
+- Verify that command paths are extracted correctly.
 
 ### Unit Testing
 
@@ -117,16 +164,25 @@ Test:
 - Path extraction from command strings.
 - Entry ID generation.
 - Missing fields.
-- Normalization of registry, startup folder, task, and service entries.
+- Normalization of:
+  - Registry entries
+  - Startup folder entries
+  - Scheduled task entries
+  - Service entries
 
 ---
 
-## 5. Risk Rules
+## 5. Risk Analysis
 
 ### Implement
 
-- `app/analysis/rules.py`
 - `app/analysis/risk_engine.py`
+- `app/rules/risk_rule.py`
+
+### UML Classes
+
+- `RiskEngine`
+- `RiskRule`
 
 ### Goal
 
@@ -141,6 +197,7 @@ Create fake suspicious entries, for example:
 - Suspicious script file
 - Missing path
 - PowerShell command
+- Obfuscated command
 
 Verify that the risk score increases.
 
@@ -164,9 +221,15 @@ Test:
 
 - `app/storage/baseline_store.py`
 
+### UML Class
+
+- `BaselineStore`
+
 ### Goal
 
 Save and load trusted baseline entries from JSON.
+
+The baseline is the known-good autorun state of the system.
 
 ### Manual Testing
 
@@ -190,11 +253,15 @@ Test:
 
 ### Implement
 
-- `app/analysis/baseline_compare.py`
+- `app/analysis/baseline_comparator.py`
+
+### UML Class
+
+- `BaselineComparator`
 
 ### Goal
 
-Compare current scan results with baseline.
+Compare current scan results with the saved baseline.
 
 Detect:
 
@@ -223,59 +290,25 @@ Test:
 
 ---
 
-## 8. Core Engine
+## 8. Report Generation
 
 ### Implement
 
-- `app/core/engine.py`
+- `app/reports/report_generator.py`
 
-### Goal
+### UML Class
 
-Connect all project parts together.
-
-Workflow:
-
-1. Run collectors.
-2. Normalize entries.
-3. Analyze risk.
-4. Compare with baseline.
-5. Return `ScanResult`.
-
-### Manual Testing
-
-Run a complete scan from one script.
-
-Verify:
-
-- Entries are collected.
-- Entries are normalized.
-- Risk score is applied.
-- Scan summary is correct.
-
-### Unit Testing
-
-Use fake collectors and fake entries.
-
-Test:
-
-- Engine calls collectors.
-- Engine returns `ScanResult`.
-- Engine handles empty collector output.
-- Engine handles collector errors safely.
-
----
-
-## 9. Reports
-
-### Implement
-
-- `app/reports/json_report.py`
-- `app/reports/csv_report.py`
-- `app/reports/html_report.py`
+- `ReportGenerator`
 
 ### Goal
 
 Export scan results in different formats.
+
+Supported formats:
+
+- JSON
+- CSV
+- HTML
 
 ### Manual Testing
 
@@ -298,12 +331,63 @@ Test:
 
 ---
 
-## 10. CLI
+## 9. Core Engine
 
 ### Implement
 
-- `app/cli/commands.py`
+- `app/core/persistence_engine.py`
+
+### UML Class
+
+- `PersistenceEngine`
+
+### Goal
+
+Connect all project parts together.
+
+Workflow:
+
+1. Run collectors.
+2. Normalize entries.
+3. Analyze risk.
+4. Compare with baseline.
+5. Generate report.
+6. Return `ScanResult`.
+
+### Manual Testing
+
+Run a complete scan from one script.
+
+Verify:
+
+- Entries are collected.
+- Entries are normalized.
+- Risk score is applied.
+- Baseline comparison works.
+- Scan summary is correct.
+
+### Unit Testing
+
+Use fake collectors and fake entries.
+
+Test:
+
+- Engine calls collectors.
+- Engine returns `ScanResult`.
+- Engine handles empty collector output.
+- Engine handles collector errors safely.
+
+---
+
+## 10. CLI Entry Point
+
+### Implement
+
 - `app/main.py`
+
+Optional later:
+
+- `app/cli/commands.py`
 
 ### Goal
 
@@ -311,18 +395,8 @@ Allow the user to run the tool from terminal.
 
 Example commands:
 
-- `scan`
-- `create-baseline`
-- `compare`
-- `export-report`
-
-### Manual Testing
-
-Run each CLI command manually.
-
-Example:
-
 ```powershell
 python -m app.main scan
 python -m app.main create-baseline
 python -m app.main compare
+python -m app.main export-report
