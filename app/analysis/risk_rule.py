@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Callable
 
 from app.analysis.persistence_entry import PersistenceEntry
 
@@ -10,7 +11,8 @@ class RiskRule:
     name: str
     description: str
     score: int
+    check_function: Callable[[PersistenceEntry], bool]
 
     def check(self, entry: PersistenceEntry) -> bool:
         """Check if the rule matches a persistence entry."""
-        return False
+        return self.check_function(entry)
