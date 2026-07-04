@@ -14,7 +14,7 @@ class RiskEngine:
             ),
             RiskRule(
                 name="User-writable directory",
-                description="Entry runs from temp or AppData directory",
+                description="Entry runs from Temp or AppData directory",
                 score=30,
                 check_function= self.is_user_wrtiable_path,
             ),
@@ -29,6 +29,12 @@ class RiskEngine:
                 description="Entry uses suspicious PowerShell options",
                 score=40,
                 check_function=self.uses_suspicious_powershell_options,
+            ),
+            RiskRule(
+                name="Script autorun",
+                description="Entry runs a script file from autorun location",
+                score=25,
+                check_function=self.uses_script_file,
             ),
         ]
 
