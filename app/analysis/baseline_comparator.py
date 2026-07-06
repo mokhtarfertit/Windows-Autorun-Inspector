@@ -1,6 +1,6 @@
 from app.analysis.persistence_entry import PersistenceEntry
 
-class BaseLIneComparator:
+class BaseLineComparator:
     """Compare current persistence entries with baseline entries."""
 
     def compare(self,
@@ -48,7 +48,7 @@ class BaseLIneComparator:
             baseline_entries: list[PersistenceEntry],
     ) -> list[dict]:
         """Detect entries that exist in both lists but changed."""
-        baseline_by_id ={
+        baseline_by_id = {
             entry.id: entry 
             for entry in baseline_entries
         }
@@ -56,13 +56,13 @@ class BaseLIneComparator:
         modified_entries = []
 
         for current_entry in current_entries:
-            baseline_entry = baseline_by_id.get(current_entries.id)
+            baseline_entry = baseline_by_id.get(current_entry.id)
 
-            if baseline_entry and self.is_modified(current_entries, baseline_entry):
+            if baseline_entry and self.is_modified(current_entry, baseline_entry):
                 modified_entries.append(
                     {
                         "current": current_entry,
-                        "baseline": baseline_entry
+                        "baseline": baseline_entry,
                     }
                 )
         return modified_entries
