@@ -24,7 +24,7 @@ class ReportGenerator:
         except OSError:
             return ""
         
-    def export_csv(sefl, result: ScanResult, filename: str = "scan_result.csv") -> str:
+    def export_csv(self, result: ScanResult, filename: str = "scan_result.csv") -> str:
         """Export scan result entries to CSV file."""
 
         report_path = self.output_dir /filename
