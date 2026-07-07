@@ -18,10 +18,10 @@ class Normalizer:
     
     def normalize_entry(self, entry: dict) -> PersistenceEntry:
         """Noramize one raw collector entry."""
-        name = entry.get("name", "")
-        source = entry.get("source", "")
-        command = entry.get("command", "")
-        path = entry.get("path", "")
+        name = entry.get("name") or ""
+        source = entry.get("source") or ""
+        command = entry.get("command") or ""
+        path = entry.get("path") or ""
 
         if not path:
             path = self.extract_path(command)

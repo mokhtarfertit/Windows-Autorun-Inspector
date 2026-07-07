@@ -80,14 +80,14 @@ class RiskEngine:
     
     def is_user_wrtiable_path(self, entry: PersistenceEntry) -> bool:
         """check if the entry runs from a user-writable directory."""
-        path = entry.path.lower()
+        path = (entry.path or "").lower()
 
         return "temp" in path or "appdata" in path
     
     def uses_suspicious_command(self, entry: PersistenceEntry) -> bool:
         """check if the entry uses a suspicious command interpreter."""
 
-        command = entry.command.lower()
+        command = (entry.command  or "").lower()
 
         suspicious_commands = [
             "powershell",
@@ -107,7 +107,7 @@ class RiskEngine:
     def uses_script_file(self, entry: PersistenceEntry) -> bool:
         """check if the entry runs a script file."""
 
-        path= entry.path.lower()
+        path = (entry.path or "").lower()
 
         suspicious_extensions = [
             ".ps1",
