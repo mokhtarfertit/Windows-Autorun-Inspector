@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cyberpersist"
+version = "0.1.0"
+desciption = "Windows persistence anaylysis tool"
+readme = "README.md"
+requires-python = ">3.10"
+dependencies = [
+    "rich==15.0.0",
+    "typer==0.26.7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+]
+
+[project.scripts]
+cyberpersist = "app.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
