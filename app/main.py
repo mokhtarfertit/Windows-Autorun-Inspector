@@ -1,18 +1,6 @@
-import sys
+import argparse
 
 from app.core.persistence_engine import PersistenceEngine
-
-def print_usage():
-    """Print available CLI commands."""
-    print("Windows Autorun Inspector")
-    print("")
-    print("Usage:")
-    print("  python -m app.main scan")
-    print("  python -m app.main create-baseline")
-    print("  python -m app.main compare")
-    print("  python -m app.main report-json")
-    print("  python -m app.main report-csv")
-    print("  python -m app.main report-html")
 
 def print_scan_summary(result):
     """Print scan result summary."""
@@ -23,13 +11,36 @@ def print_scan_summary(result):
     print(f"High: {result.high_count}")
     print(f"Critical: {result.critical_count}")
 
+def build_parser():
+    """build command line argument parser."""
+    parser = argparse.ArgumentParser(
+        prog="cyberpersist",
+        description="Windows persistence anaylsis tool",
+
+    )
+
+
+    subparsers = parser.add_subparsers(
+        dest="command",
+        required=True,
+    )
+
+    subparsers.add_parser("scan", help="Run full persistence")
+    subparsers.add_parser("create-baseline", help="Create baseline from current scan")
+    subparsers.add_parser("compare", help="Compare current scan with saved baseline")
+    subparsers.add_parser("report-json", help="Generate JSON scan report")
+    subparsers.add_parser("report-csv", help="Generate CSV scan report")
+    subparsers.add_parser("report-html", help="Generate HTML scan report")
+
+    return parser
+
+
 def main():
     """Run command line interface."""
-    if len(sys.argv) < 2:
-        print_usage()
-        return
+    parser = build_parser()
+    args = parser.parse_args()
 
-    command = sys.argv[1]
+    command = args.command
     engine = PersistenceEngine()
 
     if command == "scan":

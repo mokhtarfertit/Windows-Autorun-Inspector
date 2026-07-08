@@ -2,6 +2,7 @@ from app.analysis.persistence_entry import PersistenceEntry
 from app.analysis.scan_result import ScanResult
 from app import main as app_main
 
+import pytest
 
 class FakePersistenceEngine:
     """
@@ -153,3 +154,17 @@ def test_main_unknown_command_prints_usage(monkeypatch, capsys):
 
     assert "Windows Autorun Inspector" in captured.out
     assert "Usage:" in captured.out
+
+def test_main_prints_help(monkeypatch, capsys):
+    """Test that CLI prints help message."""
+    monkeypatch.setattr(app_main.sys, "argv", ["app.main", "--help"])
+
+    with pytest.raises(SystemExit) as exit_info:
+        app_main.main()
+
+    captured = capsys.readouterr()
+
+    assert exit_info.value.code == 0
+    assert "Windows persistence analysis tool" in captured.out
+    assert "scan" in captured.out
+    assert "create-baseline" in captured.out
