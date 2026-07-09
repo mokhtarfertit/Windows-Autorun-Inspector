@@ -1,111 +1,192 @@
-# Windows-Autorun-Inspector
-## Problem Statement
+# Windows Autorun Inspector
 
-Windows provides several auto-start mechanisms such as Startup folders, Registry Run keys, Scheduled Tasks, and Services. While these mechanisms are useful for legitimate software, they can also be abused by malware to maintain persistence after reboot or user login.
+Windows Autorun Inspector is a defensive cybersecurity tool for analyzing common Windows persistence locations. It helps students, analysts, and incident responders inspect autorun entries, calculate risk, compare the current system state with a saved baseline, and generate reports.
 
-Manually checking these locations is slow and can be difficult for students, analysts, or incident responders. It is also easy to miss suspicious entries, especially when they are hidden among many normal applications.
+The packaged CLI command is:
 
-Windows autorun inspector solves this problem by automatically scanning common Windows persistence locations, comparing the current system state with a trusted baseline, applying suspicious-pattern rules, calculating risk scores, and generating reports that help users identify possible persistence activity.
+```powershell
+cyberpersist
+```
+
+## Purpose
+
+Windows includes many legitimate auto-start mechanisms, such as Registry Run keys, Startup folders, Scheduled Tasks, and Windows Services. Malware can abuse these same locations to maintain persistence after reboot or user login.
+
+This tool scans those locations, normalizes the collected data, applies risk rules, and produces reports that make suspicious persistence entries easier to review.
 
 ## Features
 
-- Automatic scan of common Windows persistence locations
-- Startup folder inspection
-- Registry Run and RunOnce key inspection
-- Registry timestamp analysis for detecting recently modified autorun keys
-- Scheduled Tasks inspection
-- Windows Services inspection
-- Baseline creation and comparison
-- Detection of new, removed, or modified autorun entries
-- Suspicious path and command analysis
-- Risk scoring for each finding
+- Registry Run and RunOnce key collection
+- Startup folder collection
+- Scheduled Tasks collection
+- Windows Services collection
+- Normalized persistence entry model
+- SHA-256 hash calculation for executable paths
+- Timestamp support
+- Risk scoring and risk levels
+- Baseline creation
+- Baseline comparison
+- Detection of new, removed, and modified entries
 - JSON, CSV, and HTML report generation
-- MITRE ATT&CK technique mapping
-- Defensive-only detection and reporting
+- CLI support through `cyberpersist`
+- Windows executable build support with PyInstaller
+- Installer preparation support with Inno Setup
 
-## Tech Stack
-
-| Part | Technology |
-|---|---|
-| Language | Python |
-| First Interface | CLI |
-| Future Interface | PySide6 Desktop GUI |
-| Registry Scanner | winreg |
-| System Commands | PowerShell + subprocess |
-| File Scanning | pathlib / os |
-| Baseline Storage | JSON |
-| Reports | JSON, CSV, HTML |
-| CLI Framework | Typer |
-| Terminal UI | Rich |
-| HTML Templates | Jinja2 |
-| Testing | pytest |
-| Version Control | Git + GitHub |
-
-# Project Structure
+## Project Structure
 
 ```text
-Windows autorun inspector/
-│
+WAI/
 ├── app/
 │   ├── main.py
-│   │
-│   ├── core/
-│   │   └── engine.py
-│   │
-│   ├── cli/
-│   │   └── commands.py
-│   │
-│   ├── gui/
-│   │   ├── main_window.py
-│   │   ├── results_table.py
-│   │   └── details_panel.py
-│   │
-│   ├── collectors/
-│   │   ├── startup_collector.py
-│   │   ├── registry_collector.py
-│   │   ├── tasks_collector.py
-│   │   └── services_collector.py
-│   │
 │   ├── analysis/
+│   │   ├── baseline_comparator.py
 │   │   ├── normalizer.py
+│   │   ├── persistence_entry.py
 │   │   ├── risk_engine.py
-│   │   ├── baseline_compare.py
-│   │   └── rules.py
-│   │
+│   │   ├── risk_rule.py
+│   │   └── scan_result.py
+│   ├── collectors/
+│   │   ├── base_collector.py
+│   │   ├── registry_collector.py
+│   │   ├── services_collector.py
+│   │   ├── startup_collector.py
+│   │   └── tasks_collector.py
+│   ├── core/
+│   │   └── persistence_engine.py
 │   ├── reports/
-│   │   ├── json_report.py
-│   │   ├── csv_report.py
-│   │   └── html_report.py
-│   │
+│   │   └── report_generator.py
 │   ├── storage/
-│   │   ├── baseline_store.py
-│   │   └── history_store.py
-│   │
+│   │   └── baseline_store.py
 │   └── utils/
-│       ├── powershell_runner.py
 │       ├── hash_utils.py
+│       ├── powershell_runner.py
 │       └── time_utils.py
-│
 ├── tests/
-├── docs/
-├── reports/
-├── README.md
+├── testing_manually/
+├── doc/
+├── main.py
+├── pyproject.toml
 ├── requirements.txt
-├── .gitignore
-└── LICENSE
-
+├── build_exe.bat
+├── pytest.ini
+└── README.md
 ```
-```markdown
-## Application Workflow
 
-1. The user runs a command such as `winpersist scan`.
-2. The CLI sends the request to the Core Engine.
-3. The Core Engine starts the collectors.
-4. Collectors inspect Startup folders, Registry Run keys, Scheduled Tasks, and Windows Services.
-5. The Normalizer converts all collected entries into a common format.
-6. The Risk Engine applies suspicious-pattern rules and calculates risk scores.
-7. The Baseline Comparator checks for new, removed, or modified entries.
-8. Findings are classified as Low, Medium, High, or Critical.
-9. The Report Generator exports JSON, CSV, or HTML reports.
-10. The user reviews the final summary and detailed report.
+## How It Works
 
+```text
+CLI command
+    ↓
+app/main.py
+    ↓
+PersistenceEngine
+    ↓
+Collectors
+    ↓
+Normalizer
+    ↓
+RiskEngine
+    ↓
+BaselineComparator / ReportGenerator
+```
+
+The main engine coordinates the full workflow:
+
+1. Run collectors.
+2. Normalize raw collector dictionaries into `PersistenceEntry` objects.
+3. Analyze entries with risk rules.
+4. Build a `ScanResult`.
+5. Save baselines or generate reports when requested.
+
+## CLI Commands
+
+Run from the project root:
+
+```powershell
+python -m app.main --help
+```
+
+After installing the package locally:
+
+```powershell
+cyberpersist --help
+```
+
+Available commands:
+
+```powershell
+cyberpersist scan
+cyberpersist create-baseline
+cyberpersist compare
+cyberpersist report-json
+cyberpersist report-csv
+cyberpersist report-html
+```
+
+## Developer Installation
+
+Use Python 3.10 or newer.
+
+```powershell
+cd "C:\Users\mokht\OneDrive\Desktop\Windows Autorun Inspector\WAI"
+pip install -e .
+```
+
+For development and testing:
+
+```powershell
+pip install -e ".[dev]"
+```
+
+Then test the CLI:
+
+```powershell
+cyberpersist --help
+cyberpersist scan
+```
+
+## Run Without Installing
+
+You can also run the project directly:
+
+```powershell
+python -m app.main scan
+python -m app.main create-baseline
+python -m app.main compare
+python -m app.main report-json
+python -m app.main report-csv
+python -m app.main report-html
+```
+
+## Baseline Usage
+
+Create a trusted baseline:
+
+```powershell
+cyberpersist create-baseline
+```
+
+Compare the current system with the saved baseline:
+
+```powershell
+cyberpersist compare
+```
+
+The baseline is stored as JSON and is used to detect:
+
+- New entries
+- Removed entries
+- Modified entries
+
+## Reports
+
+Generate reports with:
+
+```powershell
+cyberpersist report-json
+cyberpersist report-csv
+cyberpersist report-html
+```
+
+Report files
+```
