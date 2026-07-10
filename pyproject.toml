@@ -5,9 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cyberpersist"
 version = "0.1.0"
-description = "Windows persistence anaylysis tool"
+description = "Windows persistence analysis tool"
 readme = "README.md"
-requires-python = ">3.10"
+requires-python = ">=3.10"
 dependencies = [
     "rich==15.0.0",
     "typer==0.26.7",
