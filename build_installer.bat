@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0"
 echo Building CyberPersist installer...
 
 set "ISCC_PATH=C:\Program Files (x86)\Inno Setup 7\ISCC.exe"

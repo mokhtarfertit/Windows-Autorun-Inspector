@@ -15,6 +15,7 @@ DisableProgramGroupPage=yes
 SetupIconFile=..\assets\cyberpersist.ico
 WizardImageFile=..\assets\installer_large.bmp
 WizardSmallImageFile=..\assets\installer_small.bmp
+UninstallDisplayIcon={app}\cyberpersist.ico
 
 [Files]
 Source: "..\dist\cyberpersist\*"; DestDir: "{app}"; Flags: recursesubdirs ignoreversion
@@ -30,3 +31,4 @@ Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription:
 
 [Run]
 Filename: "{cmd}"; Parameters: "/K ""{app}\cyberpersist.exe"" --help"; Description: "Open CyberPersist help"; Flags: postinstall skipifsilent
+
