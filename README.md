@@ -231,7 +231,6 @@ WAI/
 │       ├── powershell_runner.py
 │       └── time_utils.py
 ├── tests/
-├── testing_manually/
 ├── doc/
 ├── installer/
 │   └── cyberpersist.iss
