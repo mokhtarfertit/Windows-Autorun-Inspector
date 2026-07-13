@@ -304,6 +304,20 @@ dist-installer/
 *.pyc
 baseline.json
 ```
+## Installation
+
+### Option 1: Install With Windows Installer
+
+1. Go to the **Releases** page of this repository.
+2. Download the latest `CyberPersist-Setup.exe`.
+3. Run the installer.
+4. After installation, open **Command Prompt** or **PowerShell**.
+5. Run:
+
+```powershell
+cyberpersist --help
+
+
 
 ## Disclaimer
 
